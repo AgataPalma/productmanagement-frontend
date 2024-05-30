@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Home from './pages/Home';
+import AddProduct from './pages/AddProduct';
+import ProductList from './pages/ProductList';
+import ProductDetail from './pages/ProductDetail';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import './assets/css/main.scss'; // Ensure the SCSS is imported
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const location = useLocation();
 
-export default App;
+    return (
+        <div className="font-sans antialiased text-gray-900 bg-gray-100 min-h-screen flex flex-col">
+            <Header />
+            <div className="flex-grow">
+                <TransitionGroup>
+                    <CSSTransition key={location.key} classNames="fade" timeout={500}>
+                        <Routes location={location}>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/add-product" element={<AddProduct />} />
+                            <Route path="/product-list" element={<ProductList />} />
+                            <Route path="/product-detail/:id" element={<ProductDetail />} />
+                        </Routes>
+                    </CSSTransition>
+                </TransitionGroup>
+            </div>
+            <Footer />
+        </div>
+    );
+};
+
+const AppWrapper = () => (
+    <Router>
+        <App />
+    </Router>
+);
+
+export default AppWrapper;
