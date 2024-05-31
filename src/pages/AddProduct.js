@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import API_ROUTES from '../apiRoutes';
-import { useLocation } from 'react-router-dom';
 
 const AddProduct = () => {
     const location = useLocation();
@@ -34,10 +33,13 @@ const AddProduct = () => {
                 toast.success('Product added successfully', {
                     onClose: () => setRedirect(true),
                 });
-                //setProduct({ name: '', barcode: '', description: '', stock: 0, image_url: '' });
+            } else {
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                throw new Error(errorText || 'Failed to add product');
             }
         } catch (error) {
-            toast.error('Error adding product:', error.message);
+            toast.error(`Error adding product: ${error.message}`);
         }
     };
 
@@ -53,9 +55,9 @@ const AddProduct = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label className="block mb-1">Barcode</label>
-                    <input name="barcode" value={product.barcode} onChange={handleChange} className="border p-2 w-full" disabled={barcodeDisabled} />
+                    <input name="barcode" value={product.barcode} onChange={handleChange} className="border p-2 w-full disabled:bg-slate-100 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none" disabled={barcodeDisabled} />
                 </div>
-				<div>
+                <div>
                     <label className="block mb-1">Name</label>
                     <input name="name" value={product.name} onChange={handleChange} className="border p-2 w-full" />
                 </div>
@@ -65,7 +67,7 @@ const AddProduct = () => {
                 </div>
                 <div>
                     <label className="block mb-1">Stock</label>
-                    <input name="stock" type="number" value={product.stock} onChange={handleChange} className="border p-2 w-full" min="0"/>
+                    <input name="stock" type="number" value={product.stock} onChange={handleChange} className="border p-2 w-full" min="0" />
                 </div>
                 <div>
                     <label className="block mb-1">Image URL</label>
@@ -73,7 +75,6 @@ const AddProduct = () => {
                 </div>
                 <button type="submit" className="bg-blue-950 text-white px-4 py-2 rounded">Add Product</button>
             </form>
-            <ToastContainer />
         </div>
     );
 };

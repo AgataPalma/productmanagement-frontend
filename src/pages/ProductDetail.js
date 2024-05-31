@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API_ROUTES from '../apiRoutes';
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -22,6 +22,7 @@ const ProductDetail = () => {
                 setProduct(data);
             } catch (error) {
                 setError(error.message);
+                toast.error(`Error loading product: ${error.message}`);
             } finally {
                 setLoading(false);
             }
@@ -53,41 +54,25 @@ const ProductDetail = () => {
                 onClose: () => navigate('/product-list'),
             });
         } catch (error) {
-            toast.error('Error updating product:', error.message);
-        }
-    };
-
-    const handleStockChange = async (amount) => {
-        const updatedStock = product.stock + amount;
-        if (updatedStock < 0) return;
-        try {
-            const response = await fetch(API_ROUTES.UPDATE_PRODUCT(product.id), {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...product, stock: updatedStock }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update the stock');
-            }
-            setProduct({ ...product, stock: updatedStock });
-        } catch (error) {
-            toast.error('Error updating stock:', error.message);
+            toast.error(`Error updating product: ${error.message}`);
         }
     };
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(API_ROUTES.DELETE_PRODUCT(product.id), {
+            const response = await fetch(API_ROUTES.DELETE_PRODUCT(product.barcode), {
                 method: 'DELETE',
             });
             if (!response.ok) {
-                throw new Error('Failed to delete the product');
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                throw new Error(errorText || 'Failed to delete product');
             }
             toast.success('Product deleted successfully', {
                 onClose: () => navigate('/product-list'),
             });
         } catch (error) {
-            toast.error('Error deleting product:', error.message);
+            toast.error(`Error deleting product: ${error.message}`);
         }
     };
 
@@ -98,14 +83,14 @@ const ProductDetail = () => {
         <div className="container mx-auto p-8">
             <h1 className="text-2xl font-bold mb-8">Product Details</h1>
             <div className="bg-white p-6 shadow-md rounded">
-                <div className="mb-4">
+                <div className="mb-4 block">
                     <label className="block mb-1">Barcode</label>
                     <input
                         name="barcode"
                         value={product.barcode}
                         onChange={handleChange}
-                        className="border p-2 w-full"
-                        disabled
+                        className="border p-2 w-full disabled:bg-slate-100 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+                        disabled={true}
                     />
                 </div>
                 <div className="mb-4">
@@ -163,7 +148,6 @@ const ProductDetail = () => {
                     </button>
                 </div>
             </div>
-            <ToastContainer />
         </div>
     );
 };

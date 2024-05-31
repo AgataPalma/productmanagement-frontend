@@ -7,6 +7,8 @@ import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './assets/css/main.scss';
 
 const App = () => {
@@ -15,20 +17,21 @@ const App = () => {
     return (
         <div className="font-sans antialiased text-gray-900 bg-gray-100 min-h-screen flex flex-col">
             <title>Product management</title>
-            <Header/>
+            <Header />
             <div className="flex-grow">
                 <TransitionGroup>
                     <CSSTransition key={location.key} classNames="fade" timeout={500}>
                         <Routes location={location}>
-                            <Route path="/" element={<Home/>}/>
-                            <Route path="/add-product" element={<AddProduct/>}/>
-                            <Route path="/product-list" element={<ProductList/>}/>
-                            <Route path="/product-detail/:id" element={<ProductDetail/>}/>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/add-product" element={<AddProduct />} />
+                            <Route path="/product-list" element={<ProductList />} />
+                            <Route path="/product-detail/:id" element={<ProductDetail />} />
                         </Routes>
+
                     </CSSTransition>
                 </TransitionGroup>
             </div>
-            <Footer/>
+            <Footer />
         </div>
     );
 };
@@ -36,6 +39,7 @@ const App = () => {
 const AppWrapper = () => (
     <Router>
         <App />
+        <ToastContainer />
     </Router>
 );
 

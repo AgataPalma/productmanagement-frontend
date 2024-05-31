@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaBarcode, FaTimes } from 'react-icons/fa';
 import API_ROUTES from '../apiRoutes';
@@ -20,7 +20,9 @@ const Home = () => {
             try {
                 const response = await fetch(`${API_ROUTES.GET_BARCODE}`);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    //const errorText = await response.text();
+                    //console.error('Error response:', errorText);
+                    //throw new Error(errorText || 'Failed to read barcode');
                 }
                 const data = await response.json();
                 if (data.action) {
@@ -36,15 +38,23 @@ const Home = () => {
                         const productData = await productResponse.json();
                         setProduct(productData);
                         setLoading(false);
+
+                        toast.success(`Stock successfully ${data.action === 'ADDED' ? 'increased' : 'decreased'} for ${productData.name}`, {
+                            onClose: () => {
+                                setBarcode('');
+                                setProduct(null);
+                                setStatus(null);
+                            }
+                        });
                     } else if (data.action === 'CREATE') {
                         setLoading(false);
                         navigate('/add-product', { state: { barcode: data.barcode } });
                     }
                 }
             } catch (error) {
-                //toast.error('Error retrieving product:', error.message);
-                //clearInterval(id);
-                //setLoading(false);
+               // toast.error('Error retrieving product: ' + error.message);
+               // clearInterval(id);
+               // setLoading(false);
             }
         }, 1000);
         setIntervalId(id);
@@ -57,17 +67,6 @@ const Home = () => {
         }
         setLoading(false);
     };
-
-    useEffect(() => {
-        if (product && (status === 'ADDED' || status === 'REMOVED')) {
-            toast.success(`Stock successfully ${status === 'ADDED' ? 'increased' : 'decreased'} for ${product.name}`, {
-                onClose: () => {
-                    setBarcode('');
-                    setProduct(null);
-                }
-            });
-        }
-    }, [product, status]);
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -95,7 +94,6 @@ const Home = () => {
                         <p>Barcode: {barcode}</p>
                     </div>
                 )}
-                <ToastContainer />
             </div>
         </div>
     );

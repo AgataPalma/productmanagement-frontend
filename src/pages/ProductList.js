@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API_ROUTES from '../apiRoutes';
 import Pagination from '../components/Pagination';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
@@ -14,12 +15,14 @@ const ProductList = () => {
             try {
                 const response = await fetch(API_ROUTES.GET_PRODUCTS);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(errorText || 'Failed to load products');
                 }
                 const data = await response.json();
                 setProducts(data);
             } catch (error) {
-                console.error('Error fetching products:', error);
+                toast.error(`Error loading products: ${error.message}`);
             }
         };
         fetchProducts();
@@ -29,10 +32,9 @@ const ProductList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        if (page>1) {
+        if (page > 1) {
             window.scrollTo(0, 0); // Scroll to top on page change
         }
-
     };
 
     const paginatedProducts = products.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -48,8 +50,8 @@ const ProductList = () => {
 
             <div className="flex flex-wrap -mx-4 pb-20">
                 {paginatedProducts.map(product => (
-                    <div key={product.barcode} className="w-full md:w-1/2 lg:w-1/3 px-4 mb-8  hover:shadow-xl ">
-                        <Link to={`/product-detail/${product.barcode}`} className="product-card  ">
+                    <div key={product.barcode} className="w-full md:w-1/2 lg:w-1/3 px-4 mb-8 hover:shadow-xl">
+                        <Link to={`/product-detail/${product.barcode}`} className="product-card">
                             <img src={product.image_url} alt="Product Image" className="w-full h-48 object-cover" />
                             <div className="p-6 bg-white">
                                 <h2 className="text-2xl mb-2">{product.name}</h2>
