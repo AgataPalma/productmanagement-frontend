@@ -32,6 +32,10 @@ const ProductDetail = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'stock') {
+            const parsedValue = parseInt(value, 10);
+            if (isNaN(parsedValue) || parsedValue < 0) return;
+        }
         setProduct({ ...product, [name]: value });
     };
 
@@ -72,9 +76,8 @@ const ProductDetail = () => {
     };
 
     const handleDelete = async () => {
-        const barcodeDelete = product.barcode
         try {
-            const response = await fetch(API_ROUTES.DELETE_PRODUCT(barcodeDelete), {
+            const response = await fetch(API_ROUTES.DELETE_PRODUCT(product.id), {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -126,24 +129,14 @@ const ProductDetail = () => {
                 <div className="mb-4">
                     <label className="block mb-1">Stock</label>
                     <div className="flex items-center">
-                        <button
-                            className="bg-blue-950 text-white px-2 py-1 rounded"
-                            onClick={() => handleStockChange(-1)}
-                        >
-                            -
-                        </button>
                         <input
                             name="stock"
                             value={product.stock}
                             onChange={handleChange}
                             className="border p-2 w-20 text-center mx-2"
+                            type="number"
+                            min="0"
                         />
-                        <button
-                            className="bg-blue-950 text-white px-2 py-1 rounded"
-                            onClick={() => handleStockChange(1)}
-                        >
-                            +
-                        </button>
                     </div>
                 </div>
                 <div className="mb-4">

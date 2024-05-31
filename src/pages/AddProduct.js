@@ -62,7 +62,7 @@ const AddProduct = () => {
                 </div>
                 <div>
                     <label className="block mb-1">Stock</label>
-                    <input name="stock" type="number" value={product.stock} onChange={handleChange} className="border p-2 w-full" />
+                    <input name="stock" type="number" value={product.stock} onChange={handleChange} className="border p-2 w-full" min="0"/>
                 </div>
                 <div>
                     <label className="block mb-1">Image URL</label>
