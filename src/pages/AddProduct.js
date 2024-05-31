@@ -3,15 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import API_ROUTES from '../apiRoutes';
+import { useLocation } from 'react-router-dom';
 
 const AddProduct = () => {
+    const location = useLocation();
     const [product, setProduct] = useState({
         name: '',
-        barcode: '',
+        barcode: location.state?.barcode || '',
         description: '',
         stock: 0,
         image_url: '',
     });
+    const [barcodeDisabled, setBarcodeDisabled] = useState(!!location.state?.barcode);
     const [redirect, setRedirect] = useState(false);
     const navigate = useNavigate();
 
@@ -50,7 +53,7 @@ const AddProduct = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label className="block mb-1">Barcode</label>
-                    <input name="barcode" value={product.barcode} onChange={handleChange} className="border p-2 w-full" />
+                    <input name="barcode" value={product.barcode} onChange={handleChange} className="border p-2 w-full" disabled={barcodeDisabled} />
                 </div>
 				<div>
                     <label className="block mb-1">Name</label>
