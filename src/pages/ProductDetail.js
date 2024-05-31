@@ -50,9 +50,9 @@ const ProductDetail = () => {
             if (!response.ok) {
                 throw new Error('Failed to update the product');
             }
-            toast.success('Product updated successfully', {
-                onClose: () => navigate('/product-list'),
-            });
+            toast.success('Product updated successfully');
+            navigate('/product-list');
+            
         } catch (error) {
             toast.error(`Error updating product: ${error.message}`);
         }
@@ -68,9 +68,9 @@ const ProductDetail = () => {
                 console.error('Error response:', errorText);
                 throw new Error(errorText || 'Failed to delete product');
             }
-            toast.success('Product deleted successfully', {
-                onClose: () => navigate('/product-list'),
-            });
+            toast.success('Product deleted successfully');
+            navigate('/product-list');
+
         } catch (error) {
             toast.error(`Error deleting product: ${error.message}`);
         }

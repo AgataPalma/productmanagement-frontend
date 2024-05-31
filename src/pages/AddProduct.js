@@ -30,9 +30,8 @@ const AddProduct = () => {
                 body: JSON.stringify(product),
             });
             if (response.ok) {
-                toast.success('Product added successfully', {
-                    onClose: () => setRedirect(true),
-                });
+                toast.success('Product added successfully');
+                setRedirect(true);
             } else {
                 const errorText = await response.text();
                 console.error('Error response:', errorText);
