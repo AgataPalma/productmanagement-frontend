@@ -14,7 +14,7 @@ const App = () => {
 
     return (
         <div className="font-sans antialiased text-gray-900 bg-gray-100 min-h-screen flex flex-col">
-            <title>Stock management</title>
+            <title>Product management</title>
             <Header/>
             <div className="flex-grow">
                 <TransitionGroup>
