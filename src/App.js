@@ -14,20 +14,21 @@ const App = () => {
 
     return (
         <div className="font-sans antialiased text-gray-900 bg-gray-100 min-h-screen flex flex-col">
-            <Header />
+            <title>Stock management</title>
+            <Header/>
             <div className="flex-grow">
                 <TransitionGroup>
                     <CSSTransition key={location.key} classNames="fade" timeout={500}>
                         <Routes location={location}>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/add-product" element={<AddProduct />} />
-                            <Route path="/product-list" element={<ProductList />} />
-                            <Route path="/product-detail/:id" element={<ProductDetail />} />
+                            <Route path="/" element={<Home/>}/>
+                            <Route path="/add-product" element={<AddProduct/>}/>
+                            <Route path="/product-list" element={<ProductList/>}/>
+                            <Route path="/product-detail/:id" element={<ProductDetail/>}/>
                         </Routes>
                     </CSSTransition>
                 </TransitionGroup>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 };
