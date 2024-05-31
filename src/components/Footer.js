@@ -4,7 +4,7 @@ const Footer = () => {
     return (
         <footer className="footer bg-blue-950 -mx-4 md:mx-0 py-6">
             <div className="container mx-auto flex justify-center">
-                <a href="https://github.com/AgataPalma/pd-stockmanagement" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/AgataPalma/productmanagement-frontend" target="_blank" rel="noopener noreferrer">
                     <svg
                         baseProfile="tiny"
                         height="32px"
