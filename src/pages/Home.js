@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import API_ROUTES from '../apiRoutes';
 
 const Home = () => {
@@ -14,23 +16,30 @@ const Home = () => {
 
     const handleRetrieve = async () => {
         try {
-            const response = await fetch(`${API_ROUTES.GET_BARCODE}`);
+            const response = await fetch(`${API_ROUTES.GET_BARCODE}?barcode=${barcode}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
             setStatus(data.exists);
-            setProduct(data.product);
-            if (data.exists === false) {
-                setBarcode(data.barcode); // Update the barcode input field if status is false
-            }
-            if (data === "No records found in 'products_to_be_added' table"){
-                setBarcode("No barcodes to read"); // Update the barcode input field if status is false
-                console.log(data);
+            if (data.exists) {
+                // Ensure barcode is set correctly
+                const currentBarcode = data.barcode || barcode;
+                setBarcode(currentBarcode);
+
+                // Make another API call to fetch product details using the barcode
+                const productResponse = await fetch(API_ROUTES.GET_PRODUCT_BY_BARCODE(currentBarcode));
+                if (!productResponse.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const productData = await productResponse.json();
+                setProduct(productData);
+            } else {
+                navigate('/add-product', { state: { barcode: data.barcode } });
             }
         } catch (error) {
             console.error('Error retrieving product:', error);
-            setBarcode("No barcodes to read"); // Update the barcode input field if status is false
+            setBarcode("No barcodes to read");
         }
     };
 
@@ -48,14 +57,14 @@ const Home = () => {
                 throw new Error('Failed to update the stock');
             }
             setProduct({ ...product, stock: updatedStock });
+            setBarcode(''); // Clear barcode input field
+            setProduct(null); // Reset product
+            setStatus(null); // Reset status
+            toast.success(`Stock successfully ${amount > 0 ? 'increased' : 'decreased'} by 1.`);
         } catch (error) {
-            console.error('Error updating stock:', error);
-            alert('Failed to update stock');
-        }
-    };
 
-    const handleAddProduct = () => {
-        navigate('/add-product', { state: { barcode } });
+            toast.error('Failed to update stock');
+        }
     };
 
     return (
@@ -66,32 +75,30 @@ const Home = () => {
                 <div className="mt-8">
                     <input
                         type="text"
-                        placeholder="Enter barcode"
+                        placeholder="Barcode"
                         value={barcode}
                         onChange={handleBarcodeChange}
                         className="p-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-blue-500"
+                        disabled
                     />
-                    <button onClick={handleRetrieve} className="bg-blue-500 text-white px-4 py-2 rounded-r-md">
+                    <button onClick={handleRetrieve} className="bg-blue-950 text-white px-4 py-2 rounded-r-md">
                         Retrieve
                     </button>
                 </div>
                 {status !== null && status === true && product && (
                     <div className="mt-4">
-                        <button onClick={() => handleStockChange(1)} className="bg-green-500 text-white px-4 py-2 rounded mr-2">
-                            Add 1 Unit
-                        </button>
-                        <button onClick={() => handleStockChange(-1)} className="bg-red-500 text-white px-4 py-2 rounded">
-                            Remove 1 Unit
-                        </button>
+                        <p className="text-xl font-bold">{product.name}</p>
+                        <div className="mt-4">
+                            <button onClick={() => handleStockChange(1)} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                                Add 1 Unit
+                            </button>
+                            <button onClick={() => handleStockChange(-1)} className="bg-blue-500 text-white px-4 py-2 rounded">
+                                Remove 1 Unit
+                            </button>
+                        </div>
                     </div>
                 )}
-                {status !== null && status === false && (
-                    <div className="mt-4">
-                        <button onClick={handleAddProduct} className="bg-yellow-500 text-white px-4 py-2 rounded">
-                            Add Product
-                        </button>
-                    </div>
-                )}
+                <ToastContainer />
             </div>
         </div>
     );

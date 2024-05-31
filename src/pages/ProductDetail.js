@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API_ROUTES from '../apiRoutes';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -43,10 +45,11 @@ const ProductDetail = () => {
             if (!response.ok) {
                 throw new Error('Failed to update the product');
             }
-            alert('Product updated successfully');
+            toast.success('Product updated successfully', {
+                onClose: () => navigate('/product-list'),
+            });
         } catch (error) {
-            console.error('Error updating product:', error);
-            alert('Failed to update product');
+            toast.error('Error updating product:', error.message);
         }
     };
 
@@ -64,24 +67,24 @@ const ProductDetail = () => {
             }
             setProduct({ ...product, stock: updatedStock });
         } catch (error) {
-            console.error('Error updating stock:', error);
-            alert('Failed to update stock');
+            toast.error('Error updating stock:', error.message);
         }
     };
 
     const handleDelete = async () => {
+        const barcodeDelete = product.barcode
         try {
-            const response = await fetch(API_ROUTES.DELETE_PRODUCT(product.id), {
+            const response = await fetch(API_ROUTES.DELETE_PRODUCT(barcodeDelete), {
                 method: 'DELETE',
             });
             if (!response.ok) {
                 throw new Error('Failed to delete the product');
             }
-            alert('Product deleted successfully');
-            navigate('/product-list');
+            toast.success('Product deleted successfully', {
+                onClose: () => navigate('/product-list'),
+            });
         } catch (error) {
-            console.error('Error deleting product:', error);
-            alert('Failed to delete product');
+            toast.error('Error deleting product:', error.message);
         }
     };
 
@@ -90,22 +93,23 @@ const ProductDetail = () => {
 
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-8">Product Detail</h1>
+            <h1 className="text-2xl font-bold mb-8">Product Details</h1>
             <div className="bg-white p-6 shadow-md rounded">
-                <div className="mb-4">
-                    <label className="block mb-1">Name</label>
-                    <input
-                        name="name"
-                        value={product.name}
-                        onChange={handleChange}
-                        className="border p-2 w-full"
-                    />
-                </div>
                 <div className="mb-4">
                     <label className="block mb-1">Barcode</label>
                     <input
                         name="barcode"
                         value={product.barcode}
+                        onChange={handleChange}
+                        className="border p-2 w-full"
+                        disabled
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-1">Name</label>
+                    <input
+                        name="name"
+                        value={product.name}
                         onChange={handleChange}
                         className="border p-2 w-full"
                     />
@@ -123,7 +127,7 @@ const ProductDetail = () => {
                     <label className="block mb-1">Stock</label>
                     <div className="flex items-center">
                         <button
-                            className="bg-blue-500 text-white px-2 py-1 rounded"
+                            className="bg-blue-950 text-white px-2 py-1 rounded"
                             onClick={() => handleStockChange(-1)}
                         >
                             -
@@ -135,7 +139,7 @@ const ProductDetail = () => {
                             className="border p-2 w-20 text-center mx-2"
                         />
                         <button
-                            className="bg-blue-500 text-white px-2 py-1 rounded"
+                            className="bg-blue-950 text-white px-2 py-1 rounded"
                             onClick={() => handleStockChange(1)}
                         >
                             +
@@ -153,19 +157,20 @@ const ProductDetail = () => {
                 </div>
                 <div className="flex space-x-4">
                     <button
-                        className="bg-green-500 text-white px-4 py-2 rounded"
+                        className="bg-blue-950 text-white px-4 py-2 rounded"
                         onClick={handleSave}
                     >
                         Save
                     </button>
                     <button
-                        className="bg-red-500 text-white px-4 py-2 rounded"
+                        className="bg-red-800 text-white px-4 py-2 rounded"
                         onClick={handleDelete}
                     >
                         Delete
                     </button>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

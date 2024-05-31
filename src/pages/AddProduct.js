@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import API_ROUTES from '../apiRoutes';
 
 const AddProduct = () => {
-    const location = useLocation();
     const [product, setProduct] = useState({
         name: '',
-        barcode: location.state?.barcode || '',
+        barcode: '',
         description: '',
         stock: 0,
         image_url: '',
     });
+    const [redirect, setRedirect] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setProduct({ ...product, [e.target.name]: e.target.value });
@@ -25,17 +28,25 @@ const AddProduct = () => {
                 body: JSON.stringify(product),
             });
             if (response.ok) {
-                alert('Product added successfully');
-                setProduct({ name: '', barcode: '', description: '', stock: 0, image_url: '' });
+                toast.success('Product added successfully', {
+                    onClose: () => setRedirect(true),
+                });
+                //setProduct({ name: '', barcode: '', description: '', stock: 0, image_url: '' });
             }
         } catch (error) {
-            console.error('Error adding product:', error);
+            toast.error('Error adding product:', error.message);
         }
     };
 
+    useEffect(() => {
+        if (redirect) {
+            navigate('/product-list');
+        }
+    }, [redirect, navigate]);
+
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-8">Add Product</h1>
+            <h1 className="text-2xl font-bold mb-8">New Product</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label className="block mb-1">Name</label>
@@ -57,8 +68,9 @@ const AddProduct = () => {
                     <label className="block mb-1">Image URL</label>
                     <input name="image_url" value={product.image_url} onChange={handleChange} className="border p-2 w-full" />
                 </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Add Product</button>
+                <button type="submit" className="bg-blue-950 text-white px-4 py-2 rounded">Add Product</button>
             </form>
+            <ToastContainer />
         </div>
     );
 };

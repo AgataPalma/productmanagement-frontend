@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import API_ROUTES from '../apiRoutes';
 import Pagination from '../components/Pagination';
 
+
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -28,7 +29,10 @@ const ProductList = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        window.scrollTo(0, 0); // Scroll to top on page change
+        if (page>1) {
+            window.scrollTo(0, 0); // Scroll to top on page change
+        }
+
     };
 
     const paginatedProducts = products.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -44,8 +48,8 @@ const ProductList = () => {
 
             <div className="flex flex-wrap -mx-4 pb-20">
                 {paginatedProducts.map(product => (
-                    <div key={product.barcode} className="w-full md:w-1/2 lg:w-1/3 px-4 mb-8">
-                        <Link to={`/product-detail/${product.barcode}`} className="product-card shadow-md transition-all duration-200 ease-in-out transform hover:shadow-xl">
+                    <div key={product.barcode} className="w-full md:w-1/2 lg:w-1/3 px-4 mb-8  hover:shadow-xl ">
+                        <Link to={`/product-detail/${product.barcode}`} className="product-card  ">
                             <img src={product.image_url} alt="Product Image" className="w-full h-48 object-cover" />
                             <div className="p-6 bg-white">
                                 <h2 className="text-2xl mb-2">{product.name}</h2>

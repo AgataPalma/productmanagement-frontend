@@ -6,6 +6,7 @@ const API_ROUTES = {
     DELETE_PRODUCT: (id) => `${BASE_URL}/products/${id}`,
     UPDATE_PRODUCT: (id) => `${BASE_URL}/products/${id}`,
     GET_BARCODE: `${BASE_URL}/products/status`,
+    GET_PRODUCT_BY_BARCODE: (id) => `${BASE_URL}/products/${id}`,
 
 };
 export default API_ROUTES;

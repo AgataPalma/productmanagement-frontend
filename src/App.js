@@ -7,7 +7,7 @@ import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import './assets/css/main.scss'; // Ensure the SCSS is imported
+import './assets/css/main.scss';
 
 const App = () => {
     const location = useLocation();
