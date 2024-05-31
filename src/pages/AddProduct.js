@@ -49,12 +49,12 @@ const AddProduct = () => {
             <h1 className="text-2xl font-bold mb-8">New Product</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block mb-1">Name</label>
-                    <input name="name" value={product.name} onChange={handleChange} className="border p-2 w-full" />
-                </div>
-                <div>
                     <label className="block mb-1">Barcode</label>
                     <input name="barcode" value={product.barcode} onChange={handleChange} className="border p-2 w-full" />
+                </div>
+				<div>
+                    <label className="block mb-1">Name</label>
+                    <input name="name" value={product.name} onChange={handleChange} className="border p-2 w-full" />
                 </div>
                 <div>
                     <label className="block mb-1">Description</label>
